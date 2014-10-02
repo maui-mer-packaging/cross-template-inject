@@ -55,6 +55,7 @@
 %define libraries_to_prepare %{expand:%(test -e %{_sourcedir}/libraries_to_prepare && echo 1 || echo 0)}
 %define special_script %{expand:%(test -e %{_sourcedir}/special_script && echo 1 || echo 0)}
 %define files_to_ignore %{expand:%(test -e %{_sourcedir}/files_to_ignore && echo 1 || echo 0)}
+%define files_to_ignore2 %{expand:%(test -e %{_sourcedir}/files_to_ignore2 && echo 1 || echo 0)}
 #
 ### no changes needed below this line
 
@@ -102,6 +103,12 @@ rpm -ql %oldname > filestoinclude1
 for i in `cat %{_sourcedir}/files_to_ignore`; do
  echo "Ignoring file: $i"
  sed -e "s#^${i}.*##" -i filestoinclude1 
+done
+%endif
+%if %files_to_ignore2
+for i in `cat %{_sourcedir}/files_to_ignore2`; do
+ echo "Ignoring file: $i"
+ sed -e "s,^${i}$,," -i filestoinclude1
 done
 %endif
 tar -T filestoinclude1 -cpf - | ( cd %buildroot && tar -xvpf - )
